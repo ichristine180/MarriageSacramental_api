@@ -4,13 +4,13 @@ import User from "../database/models/users.js";
 import zxcvbn from "zxcvbn";
 export const login = async (res, options) => {
   try {
-    await params.checkParams(options, ["userName", "password"]);
-    const user = await findByUserName(options.userName);
+    await params.checkParams(options, ["mobileNo", "password"]);
+    const user = await findByMobileNo(options.mobileNo);
     if (user == null)
       return response({
         res,
         er: true,
-        message: "User with provided user name not found",
+        message: "User with provided mobile no not found",
       });
     const match = await jwt.comparePassword(options.password, user.password);
     if (!match)
@@ -21,6 +21,7 @@ export const login = async (res, options) => {
       });
     else {
       const token = jwt.generateToken(user);
+      delete user.password;
       return response({ res, result: { user: user, token: token } });
     }
   } catch (error) {
@@ -28,9 +29,9 @@ export const login = async (res, options) => {
   }
 };
 
-const findByUserName = async (username) =>
+const findByMobileNo = async (mobileNo) =>
   User.findOne({
-    where: { username: username },
+    where: { mobileNo: mobileNo },
     raw: true,
   });
 export const changePassword = async (res, req) => {

@@ -1,9 +1,11 @@
 import express from "express";
 import user from "./users.js";
+import christian from "./christian.js";
 import auth from "./authentication.js";
-import upload from "./uploadImage.js";
+import application from "./application.js";
 const app = express();
 app.use("/users", user);
+app.use("/christian", christian);
 app.use("", auth);
-app.use("", upload);
+app.use("/application", application);
 export default app;

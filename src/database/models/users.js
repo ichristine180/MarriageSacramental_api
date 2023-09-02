@@ -19,7 +19,7 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     unique: true,
   },
-  userName: {
+  mobileNo: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
@@ -30,8 +30,8 @@ const User = sequelize.define("User", {
   },
   role: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    default: 0, // christian role is 0 secretary 1 preast 2
+
+    defaultValue: 0, // christian role is 0 secretary 1 preast 2
   },
   is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 });

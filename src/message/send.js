@@ -10,7 +10,7 @@ const options = {
   },
 };
 export const sendSms = async (data) => {
-  data.sender = "Fidelis";
+  data.sender = "Nderaparish";
   data.to = checkCode(data.to) ? data.to : addCode(data.to);
   const res = await fetch("https://api.pindo.io/v1/sms/", {
     ...options,

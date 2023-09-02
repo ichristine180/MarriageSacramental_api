@@ -5,32 +5,26 @@ import { _checkPasswordStrength } from "./authentication.js";
 import randomString from "randomstring";
 import { sendSms, checkCode, removeCode } from "../message/send.js";
 const requiredFields = ["firstName", "lastName", "email", "mobileNo"];
-const createUser = async (res, options) => {
+export const createUser = async (options) => {
   try {
-    await params.checkParams(options, requiredFields);
-    const data = options;
-    data.email = data.email.toLowerCase();
-    const password = randomString.generate(12);
-    data.password = await jwt.hashPassword(password);
-    const user = await User.create(data);
-    if (user) {
-      _welcomeMessage(data, password);
-      response({ res, result: user });
-    }
   } catch (error) {
     response({ res, er: true, message: error.message });
   }
-};
-
-export const setUserRights = async (data) => {
-  try {
-    await params.checkParams(data, ["id", "user_rights"]);
-    data.user_rights > 0
-      ? true
-      : Promise.reject(new Error("Users must have at least one right."));
-    User.update({ user_rights: data.user_rights }, { where: { id: data.id } });
-  } catch (error) {
-    response({ res, er: true, message: error.message });
+  await params.checkParams(options, requiredFields);
+  let { email, mobileNo, firstName, lastName } = options;
+  email = email.toLowerCase();
+  let plainpassword = randomString.generate(12);
+  const password = await jwt.hashPassword(plainpassword);
+  const user = await User.create({
+    email,
+    mobileNo,
+    firstName,
+    lastName,
+    password,
+  });
+  if (user) {
+    _welcomeMessage(options, plainpassword);
+    return user;
   }
 };
 
@@ -86,12 +80,10 @@ export const deactivateUser = (data) =>
 
 const _welcomeMessage = async (data, password) =>
   await sendSms({
-    to: data.userName,
-    text: `Dear ${data.lastName} wellcome on Litigation management system, 
-      username ${
-        checkCode(data.userName) ? removeCode(data.userName) : data.userName
-      } 
-      password ${password}`,
+    to: data.mobileNo,
+    text: `Dear ${data.lastName} wellcome on our platform, your username ${
+      checkCode(data.mobileNo) ? removeCode(data.mobileNo) : data.mobileNo
+    } password ${password}`,
   });
 export const getAll = async (res) => {
   try {
@@ -102,3 +94,12 @@ export const getAll = async (res) => {
   }
 };
 
+export const findUserByMobileNo = async (res, data) => {
+  try {
+    await params.checkParams(data, ["mobileNo"]);
+    const result = await User.findOne({ where: { mobileNo: data.mobileNo } });
+    response({ res, result: result });
+  } catch (error) {
+    response({ res, er: true, message: error.message });
+  }
+};

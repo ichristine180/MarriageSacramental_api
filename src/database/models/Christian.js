@@ -28,8 +28,7 @@ const Christian = sequelize.define("Christian", {
   },
   status: {
     type: DataTypes.STRING,
-    allowNull: false,
-    default: "pending",
+    defaultValue: "pending",//validated,rejected
   },
   accountId: {
     type: DataTypes.UUID,
